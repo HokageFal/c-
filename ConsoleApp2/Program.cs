@@ -43,12 +43,22 @@ namespace Calculator
         // Базовая функция вычисления (будет расширена в ветке 'operations')
         static double EvaluateExpression(string expression)
         {
-            // Простейшая реализация - только сложение
-            string[] parts = expression.Split('+');
-            double result = 0;
-            foreach (string part in parts)
+            // Добавляем поддержку -, *, /
+            expression = expression.Replace(" ", ""); // Убираем пробелы
+
+            // Простая реализация без приоритета операций (для упрощения)
+            string[] parts = expression.Split('+', '-', '*', '/');
+            double result = double.Parse(parts[0]);
+            for (int i = 1; i < parts.Length; i++)
             {
-                result += double.Parse(part.Trim());
+                char op = expression[expression.IndexOf(parts[i - 1]) + parts[i - 1].Length];
+                switch (op)
+                {
+                    case '+': result += double.Parse(parts[i]); break;
+                    case '-': result -= double.Parse(parts[i]); break;
+                    case '*': result *= double.Parse(parts[i]); break;
+                    case '/': result /= double.Parse(parts[i]); break;
+                }
             }
             return result;
         }
