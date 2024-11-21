@@ -36,7 +36,26 @@ namespace Calculator
                 Console.WriteLine(item);
             }
 
-            // Здесь будет добавлена функция экспорта в TXT (см. ветку 'export')
+            static void ExportHistoryToTxt(string filePath)
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    foreach (string item in history)
+                    {
+                        writer.WriteLine(item);
+                    }
+                }
+                Console.WriteLine($"История вычислений экспортирована в файл: {filePath}");
+
+            }
+            Console.Write("Экспортировать историю в TXT? (y/n): ");
+            string exportChoice = Console.ReadLine();
+            if (exportChoice.ToLower() == "y")
+            {
+                Console.Write("Введите имя файла: ");
+                string fileName = Console.ReadLine();
+                ExportHistoryToTxt(fileName + ".txt");
+            }
         }
 
 
@@ -64,3 +83,4 @@ namespace Calculator
         }
     }
 }
+
