@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Calculator
 {
@@ -36,18 +37,6 @@ namespace Calculator
                 Console.WriteLine(item);
             }
 
-            static void ExportHistoryToTxt(string filePath)
-            {
-                using (StreamWriter writer = new StreamWriter(filePath))
-                {
-                    foreach (string item in history)
-                    {
-                        writer.WriteLine(item);
-                    }
-                }
-                Console.WriteLine($"История вычислений экспортирована в файл: {filePath}");
-
-            }
             Console.Write("Экспортировать историю в TXT? (y/n): ");
             string exportChoice = Console.ReadLine();
             if (exportChoice.ToLower() == "y")
@@ -58,29 +47,54 @@ namespace Calculator
             }
         }
 
+        static void ExportHistoryToTxt(string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                foreach (string item in history)
+                {
+                    writer.WriteLine(item);
+                }
+            }
 
-        // Базовая функция вычисления (будет расширена в ветке 'operations')
+            Console.WriteLine($"История вычислений экспортирована в файл: {filePath}");
+        }
+
         static double EvaluateExpression(string expression)
         {
-            // Добавляем поддержку -, *, /
             expression = expression.Replace(" ", ""); // Убираем пробелы
 
-            // Простая реализация без приоритета операций (для упрощения)
+            // Простая реализация без приоритета операций (для упрощения)  
             string[] parts = expression.Split('+', '-', '*', '/');
+            if (parts.Length == 0) throw new ArgumentException("Некорректное выражение");
+
             double result = double.Parse(parts[0]);
             for (int i = 1; i < parts.Length; i++)
             {
                 char op = expression[expression.IndexOf(parts[i - 1]) + parts[i - 1].Length];
+                double operand = double.Parse(parts[i]);
+
                 switch (op)
                 {
-                    case '+': result += double.Parse(parts[i]); break;
-                    case '-': result -= double.Parse(parts[i]); break;
-                    case '*': result *= double.Parse(parts[i]); break;
-                    case '/': result /= double.Parse(parts[i]); break;
+                    case '+':
+                        result += operand;
+                        break;
+                    case '-':
+                        result -= operand;
+                        break;
+                    case '*':
+                        result *= operand;
+                        break;
+                    case '/':
+                        if (operand == 0) throw new DivideByZeroException("Деление на ноль запрещено!");
+                        result /= operand;
+                        break;
+                    default:
+                        throw new ArgumentException($"Неизвестная операция: {op}");
                 }
             }
+
             return result;
         }
     }
 }
-
